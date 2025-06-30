@@ -1,0 +1,93 @@
+<div class="repo-header">
+  <button (click)="openRepo()" class="open-repo-btn">Open Git Repository</button>
+  @if (repoPath()) {
+    <span class="repo-path">Current Repo: {{ repoPath() }}</span>
+  }
+</div>
+
+@if (repoPath()) {
+  <div class="commit-section">
+    <div class="author-info">
+      <mat-icon>person</mat-icon>
+      @if (author().name) {
+        <span>{{ author().name }} &lt;{{ author().email }}&gt;</span>
+      } @else {
+        <span>No author configured</span>
+      }
+    </div>
+    <div class="commit-controls">
+      <input
+        class="commit-message-input"
+        [(ngModel)]="commitMessage"
+        placeholder="Commit message..."
+        maxlength="200"
+      />
+      <button (click)="commit()" class="commit-btn" [disabled]="!stagedChanges().length">Commit</button>
+    </div>
+    <div class="commit-feedback">
+      @if (commitSuccess) {
+        <span class="commit-success">{{ commitSuccess }}</span>
+      }
+      @if (commitError) {
+        <span class="commit-error">{{ commitError }}</span>
+      }
+    </div>
+  </div>
+}
+
+<!-- Spinner overlay for drag operations -->
+@if (dragLoading) {
+  <div class="drag-loading-overlay">
+    <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+  </div>
+}
+
+<div class="changes-container">
+  <!-- Staged Changes Section -->
+  <div class="section">
+    <div class="section-header staged">
+      <span>Staged Changes <span class="count">({{ stagedChanges().length }})</span></span>
+    </div>
+    <mat-divider></mat-divider>
+    <div
+      cdkDropList
+      [cdkDropListData]="stagedChanges()"
+      [cdkDropListConnectedTo]="['unstagedList']"
+      class="changes-list fixed-height-list"
+      id="stagedList"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (change of stagedChanges(); track change.name) {
+        <div cdkDrag class="change-row card-row">
+          <div class="avatar staged-avatar">{{ change.name.charAt(0).toUpperCase() }}</div>
+          <mat-icon class="change-icon" color="primary">description</mat-icon>
+          <span class="change-filename">{{ change.name }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Unstaged Changes Section -->
+  <div class="section">
+    <div class="section-header unstaged">
+      <span>Unstaged Changes <span class="count">({{ unstagedChanges().length }})</span></span>
+    </div>
+    <mat-divider></mat-divider>
+    <div
+      cdkDropList
+      [cdkDropListData]="unstagedChanges()"
+      [cdkDropListConnectedTo]="['stagedList']"
+      class="changes-list fixed-height-list"
+      id="unstagedList"
+      (cdkDropListDropped)="drop($event)"
+    >
+      @for (change of unstagedChanges(); track change.name) {
+        <div cdkDrag class="change-row card-row">
+          <div class="avatar unstaged-avatar">{{ change.name.charAt(0).toUpperCase() }}</div>
+          <mat-icon class="change-icon" color="warn">description</mat-icon>
+          <span class="change-filename">{{ change.name }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>
