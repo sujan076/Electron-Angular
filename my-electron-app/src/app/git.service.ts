@@ -12,6 +12,7 @@ declare global {
       gitCommit: (message: string) => Promise<{ success: boolean, error?: string, commit?: any, staged?: string[], unstaged?: string[] }>;
       gitGetBranches: () => Promise<{ branches: string[], current: string }>;
       gitCheckoutBranch: (branch: string) => Promise<{ success: boolean, error?: string }>;
+      gitGetLogs: () => Promise<{ all: any[] }>;
     };
   }
 }
@@ -27,6 +28,7 @@ export class GitService {
   repoPath = signal<string>('');
   author = signal<{ name: string, email: string }>({ name: '', email: '' });
   branches = signal<{ branches: string[], current: string }>({ branches: [], current: '' });
+  logs = signal<any[]>([]);
 
   constructor() {
     this.refresh();
@@ -40,6 +42,10 @@ export class GitService {
       this.repoPath.set('/fake/path/for/browser/testing');
       this.author.set({ name: 'Test User', email: 'test@example.com' });
       this.branches.set({ branches: ['master', 'develop'], current: 'master' });
+      this.logs.set([
+        { hash: '1234567', date: '2023-01-01', message: 'Initial commit', author_name: 'Test User' },
+        { hash: '890abcde', date: '2023-01-02', message: 'Added new feature', author_name: 'Test User' },
+      ]);
       return;
     }
     const status = await this.electronAPI.gitStatus();
@@ -51,6 +57,8 @@ export class GitService {
     this.author.set(authorResult);
     const branchesResult = await this.electronAPI.gitGetBranches();
     this.branches.set(branchesResult);
+    const logsResult = await this.electronAPI.gitGetLogs();
+    this.logs.set(logsResult.all);
   }
 
   async stageFileOptimistic(staged: any[], unstaged: any[], file: {name: string}) {

@@ -118,6 +118,17 @@ function initializeGit(win) {
       return { success: false, error: error.message };
     }
   });
+
+  ipcMain.handle('git-get-logs', async () => {
+    if (!git) return { all: [] };
+    try {
+      const log = await git.log();
+      return log;
+    } catch (error) {
+      console.error('Git get logs error:', error);
+      return { all: [] };
+    }
+  });
 }
 
 module.exports = { initializeGit };
