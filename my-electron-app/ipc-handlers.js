@@ -96,6 +96,28 @@ function initializeGit(win) {
       return { success: false, error: error.message };
     }
   });
+
+  ipcMain.handle('git-get-branches', async () => {
+    if (!git) return { branches: [], current: '' };
+    try {
+      const branches = await git.branchLocal();
+      return { branches: branches.all, current: branches.current };
+    } catch (error) {
+      console.error('Git get branches error:', error);
+      return { branches: [], current: '' };
+    }
+  });
+
+  ipcMain.handle('git-checkout-branch', async (event, branch) => {
+    if (!git) return { success: false, error: 'Git not initialized' };
+    try {
+      await git.checkout(branch);
+      return { success: true };
+    } catch (error) {
+      console.error('Git checkout error:', error);
+      return { success: false, error: error.message };
+    }
+  });
 }
 
 module.exports = { initializeGit };

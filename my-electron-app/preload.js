@@ -9,5 +9,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   gitOpenRepo: () => ipcRenderer.invoke('git-open-repo'),
   gitGetRepoPath: () => ipcRenderer.invoke('git-get-repo-path'),
   gitGetAuthor: () => ipcRenderer.invoke('git-get-author'),
-  gitCommit: (message) => ipcRenderer.invoke('git-commit', message)
-}); 
+  gitCommit: (message) => ipcRenderer.invoke('git-commit', message),
+  gitGetBranches: () => ipcRenderer.invoke('git-get-branches'),
+  gitCheckoutBranch: (branch) => ipcRenderer.invoke('git-checkout-branch', branch)
+});
+ 

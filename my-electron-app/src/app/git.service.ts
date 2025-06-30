@@ -10,6 +10,8 @@ declare global {
       gitGetRepoPath: () => Promise<{ repoPath: string }>;
       gitGetAuthor: () => Promise<{ name: string, email: string }>;
       gitCommit: (message: string) => Promise<{ success: boolean, error?: string, commit?: any, staged?: string[], unstaged?: string[] }>;
+      gitGetBranches: () => Promise<{ branches: string[], current: string }>;
+      gitCheckoutBranch: (branch: string) => Promise<{ success: boolean, error?: string }>;
     };
   }
 }
@@ -24,6 +26,7 @@ export class GitService {
   unstagedChanges = signal<{ icon: string, name: string }[]>([]);
   repoPath = signal<string>('');
   author = signal<{ name: string, email: string }>({ name: '', email: '' });
+  branches = signal<{ branches: string[], current: string }>({ branches: [], current: '' });
 
   constructor() {
     this.refresh();
@@ -36,6 +39,7 @@ export class GitService {
       this.unstagedChanges.set([{ icon: 'note', name: 'sample-unstaged.txt' }]);
       this.repoPath.set('/fake/path/for/browser/testing');
       this.author.set({ name: 'Test User', email: 'test@example.com' });
+      this.branches.set({ branches: ['master', 'develop'], current: 'master' });
       return;
     }
     const status = await this.electronAPI.gitStatus();
@@ -45,6 +49,8 @@ export class GitService {
     this.repoPath.set(repoPathResult.repoPath);
     const authorResult = await this.electronAPI.gitGetAuthor();
     this.author.set(authorResult);
+    const branchesResult = await this.electronAPI.gitGetBranches();
+    this.branches.set(branchesResult);
   }
 
   async stageFileOptimistic(staged: any[], unstaged: any[], file: {name: string}) {
@@ -106,5 +112,16 @@ export class GitService {
       await this.refresh();
     }
     return result;
+  }
+
+  async checkoutBranch(branch: string) {
+    if (!this.electronAPI) {
+      console.warn('Not running in Electron environment');
+      return;
+    }
+    const result = await this.electronAPI.gitCheckoutBranch(branch);
+    if (result.success) {
+      await this.refresh();
+    }
   }
 }

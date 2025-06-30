@@ -1,8 +1,0 @@
-refactor: adopt modern angular features and fix ui bug
-
-- Refactored the application to use Angular Signals for state management, improving performance and simplifying the codebase.
-- Centralized state logic in the GitService, making it a lightweight, signal-based store.
-- Standardized file naming to follow Angular conventions.
-- Cleaned up the Electron main process by separating IPC handlers into a dedicated file.
-- Fixed a UI bug where the file being moved would appear in both the staged and unstaged lists temporarily.
-- Updated the templates to use the new Angular 20 control flow syntax.
