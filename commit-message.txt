@@ -1,0 +1,4 @@
+feat: add commit history
+
+- Added a new view to display the commit history of the current branch.
+- Shows the commit message, author, and date for each commit.

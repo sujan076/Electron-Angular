@@ -13,6 +13,8 @@ declare global {
       gitGetBranches: () => Promise<{ branches: string[], current: string }>;
       gitCheckoutBranch: (branch: string) => Promise<{ success: boolean, error?: string }>;
       gitGetLogs: () => Promise<{ all: any[] }>;
+      gitPull: () => Promise<{ success: boolean, error?: string }>;
+      gitPush: () => Promise<{ success: boolean, error?: string }>;
     };
   }
 }
@@ -131,5 +133,29 @@ export class GitService {
     if (result.success) {
       await this.refresh();
     }
+  }
+
+  async pull(): Promise<{ success: boolean, error?: string }> {
+    if (!this.electronAPI) {
+      console.warn('Not running in Electron environment');
+      return { success: false, error: 'Not running in Electron environment' };
+    }
+    const result = await this.electronAPI.gitPull();
+    if (result.success) {
+      await this.refresh();
+    }
+    return result;
+  }
+
+  async push(): Promise<{ success: boolean, error?: string }> {
+    if (!this.electronAPI) {
+      console.warn('Not running in Electron environment');
+      return { success: false, error: 'Not running in Electron environment' };
+    }
+    const result = await this.electronAPI.gitPush();
+    if (result.success) {
+      await this.refresh();
+    }
+    return result;
   }
 }

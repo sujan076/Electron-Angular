@@ -47,6 +47,28 @@ export class ChangesBoardComponent {
     }
   }
 
+  async pull() {
+    this.commitError = '';
+    this.commitSuccess = '';
+    const result = await this.gitService.pull();
+    if (result.success) {
+      this.commitSuccess = 'Pull successful!';
+    } else {
+      this.commitError = result.error || 'Pull failed.';
+    }
+  }
+
+  async push() {
+    this.commitError = '';
+    this.commitSuccess = '';
+    const result = await this.gitService.push();
+    if (result.success) {
+      this.commitSuccess = 'Push successful!';
+    } else {
+      this.commitError = result.error || 'Push failed.';
+    }
+  }
+
   async drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);

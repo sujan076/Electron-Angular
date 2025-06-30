@@ -3,6 +3,8 @@
   @if (repoPath()) {
     <span class="repo-path">Current Repo: {{ repoPath() }}</span>
   }
+  <button (click)="pull()" class="open-repo-btn">Pull</button>
+  <button (click)="push()" class="open-repo-btn">Push</button>
 </div>
 
 @if (repoPath()) {

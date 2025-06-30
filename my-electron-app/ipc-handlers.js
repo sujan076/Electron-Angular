@@ -129,6 +129,28 @@ function initializeGit(win) {
       return { all: [] };
     }
   });
+
+  ipcMain.handle('git-pull', async () => {
+    if (!git) return { success: false, error: 'Git not initialized' };
+    try {
+      const pullResult = await git.pull();
+      return { success: true, result: pullResult };
+    } catch (error) {
+      console.error('Git pull error:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('git-push', async () => {
+    if (!git) return { success: false, error: 'Git not initialized' };
+    try {
+      const pushResult = await git.push();
+      return { success: true, result: pushResult };
+    } catch (error) {
+      console.error('Git push error:', error);
+      return { success: false, error: error.message };
+    }
+  });
 }
 
 module.exports = { initializeGit };
