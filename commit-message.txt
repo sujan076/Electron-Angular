@@ -1,4 +1,4 @@
-feat: add commit history
+feat: add remote operations (pull/push)
 
-- Added a new view to display the commit history of the current branch.
-- Shows the commit message, author, and date for each commit.
+- Added buttons to pull changes from and push changes to the remote repository.
+- Provides basic synchronization capabilities.
